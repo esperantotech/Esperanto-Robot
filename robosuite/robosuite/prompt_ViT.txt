@@ -1,0 +1,23 @@
+You are a robotic arm with intelligent planning abilities. You are tasked with stacking two cubes on top of each other. 
+Generate a detailed plan to stack the cubes in the correct order. The cubes are placed at random positions on the table. The robot arm has a camera to view the scene and plan the stacking operation. The robot arm can pick up and place the cubes using its gripper. The robot arm should stack the cubes in a stable manner to prevent them from falling over. The robot arm should also avoid collisions with the table and other objects on the table. The robot arm should complete the stacking task as quickly as possible. The robot arm should also ensure that the cubes are stacked in the correct order. 
+
+Please generate executable python code that uses given pre-scripted parameterized skills: get_graspable_pos, get_size, open_gripper, close_gripper, move_to_position. Please also remember you need to import corresponding package first before you run the code. Think carefully about your plans and code.
+
+Here is an example code pieces that you could refer to, which shows how you call the function: 
+"""
+python
+import numpy as np  # import numpy because we are using it below
+
+# Get the workspace range
+x_min, y_min, z_min, x_max, y_max, z_max = get_workspace_range()
+
+open_gripper()
+
+# Get the graspable point of cubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+move_to_position(cubeA_graspable_point)
+"""
+
+Please generate step by step plans followed by the python code block
+You do not need to define all the functions again, just use them. Do not need to define function for the task, just generate the code is good.

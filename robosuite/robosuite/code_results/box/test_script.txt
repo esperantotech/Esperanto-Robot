@@ -1,0 +1,26 @@
+python
+import numpy as np  # import numpy because we are using it below
+
+# Get the workspace range
+x_min, y_min, z_min, x_max, y_max, z_max = get_workspace_range()
+
+open_gripper()
+
+# Get the graspable point of cubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Move the gripper close to the graspable point of cubeA
+move_to_position(cubeA_graspable_point)
+
+# Close the gripper to grasp magnetic_cube1
+close_gripper()
+
+cubeB_position = get_graspable_point('cubeB')
+
+cubeB_position[2] = 0.5 * cubeB_position[2] + cubeB_position[2] + 0.03
+
+move_to_position(cubeB_position)
+
+
+# Open the gripper to release CubeA on top of CubeB
+open_gripper()
