@@ -1,0 +1,33 @@
+
+import numpy as np  # Import numpy for any potential calculations
+
+# Step 1: Initialize and Open Gripper
+open_gripper()
+
+# Step 2: Grasp CubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+move_to_position(cubeA_graspable_point + np.array([0, 0, 0.1]))  # Move above CubeA
+move_to_position(cubeA_graspable_point)  # Move down to grasp CubeA
+close_gripper()
+
+# Step 3: Place CubeA on CubeB
+cubeB_graspable_point = get_graspable_point('cubeB')
+cubeB_size = get_size('cubeB')
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + 0.1]))  # Move above CubeB
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2]]))  # Move down to place CubeA on CubeB
+open_gripper()
+
+# Step 4: Grasp BallA
+ballA_graspable_point = get_graspable_point('ballA')
+move_to_position(ballA_graspable_point + np.array([0, 0, 0.1]))  # Move above BallA
+move_to_position(ballA_graspable_point)  # Move down to grasp BallA
+close_gripper()
+
+# Step 5: Place BallA on CubeA
+cubeA_size = get_size('cubeA')
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + cubeA_size[2] + 0.1]))  # Move above CubeA on CubeB
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + cubeA_size[2]]))  # Move down to place BallA on CubeA
+open_gripper()
+
+# Step 6: Return to a Safe Position
+move_to_position(np.array([0, 0, 0.5]))  # Move to a safe position

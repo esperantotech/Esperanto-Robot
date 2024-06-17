@@ -1,0 +1,41 @@
+ Step 1: Identify the graspable point on CubeA and CubeB
+Step 2: Move the robotic arm to the graspable point on CubeA
+Step 3: Open the gripper
+Step 4: Move the robotic arm to the graspable point on CubeB
+Step 5: Close the gripper to stack CubeA on top of CubeB
+
+Here is the corresponding Python code:
+
+```python
+import numpy as np
+
+# Function definitions assumed to be pre-scripted
+def open_gripper():
+    pass
+
+def close_gripper():
+    pass
+
+def move_to_position(position):
+    pass
+
+def get_graspable_point(cube_name):
+    pass
+
+# Step 1: Identify the graspable point on CubeA and CubeB
+cubeA_graspable_point = get_graspable_point('cubeA')
+cubeB_graspable_point = get_graspable_point('cubeB')
+
+# Step 2: Move the robotic arm to the graspable point on CubeA
+move_to_position(cubeA_graspable_point)
+
+# Step 3: Open the gripper
+open_gripper()
+
+# Step 4: Move the robotic arm to the graspable point on CubeB
+move_to_position(cubeB_graspable_point)
+
+# Step 5: Close the gripper to stack CubeA on top of CubeB
+close_gripper()
+```
+This code assumes that the functions `open_gripper()`, `close_gripper()`, `move_to_position()`, and `get_graspable_point()` are pre-scripted and available for use. The `get_graspable_point()` function is assumed to return the coordinates of the graspable point on the cube. The `move_to_position()` function is assumed to move the robotic arm to the specified position.

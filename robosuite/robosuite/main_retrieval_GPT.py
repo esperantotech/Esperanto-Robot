@@ -5,8 +5,10 @@ import base64
 import numpy as np
 from PIL import Image
 import io
+import imageio
 
-from robosuite.environments.manipulation.stack import Stack
+# from robosuite.environments.manipulation.stack import Stack
+from robosuite.environments.manipulation.stack_multiple import Stack
 
 def open_ai_call_with_retry(model_name, messages, temperature=0.0, seed=1000, max_tokens=300):
     reset_trigger_phrases = ["CHOICE", "NUM"]
@@ -46,12 +48,11 @@ def load_prompt(prompt_file_path):
 
 if __name__ == "__main__":
     model = "gpt-4o"
-    prompt_file_path = 'prompt_ViT.txt'  # Path to your prompt file
+    prompt_file_path = 'prompt.txt'  # Path to your prompt file
     testing_iterations = 10
 
     # Load the prompt from the file
     prompt_text = load_prompt(prompt_file_path)
-    
     for i in range(testing_iterations):
         cubeA_pos = np.random.uniform(low=-0.08, high=0.08, size=3)
         cubeB_pos = np.random.uniform(low=-0.08, high=0.08, size=3)
@@ -65,21 +66,29 @@ if __name__ == "__main__":
             has_renderer=False,
             has_offscreen_renderer=True,
             use_camera_obs=True,
-            camera_names="frontview",
+            camera_names="birdview",
             horizon=1000,
             control_freq=20,
             initialization_noise=None,
-            cube_A_pos=cubeA_pos,
-            cube_B_pos=cubeB_pos
+            # cube_A_pos=cubeA_pos,
+            # cube_B_pos=cubeB_pos
         )
 
         obs = env.reset()
-        env.close()       
-        images_base64 = []
-        for camera_name in ["frontview", "sideview"]:
-            image = Image.fromarray(obs[f'{camera_name}_image'])
-            base64_image = encode_image(image)
-            images_base64.append(base64_image)
+        for _ in range(50):
+            obs, reward, done, info = env.step([-1, 0, 0, 0, 0, 0, 0, 0])
+            
+        image = obs["birdview_image"]
+        painted_image = env.process_image(image, obs)
+        env.close()        
+        image_path = 'code_results/box/GPT/image.png'
+        
+        if testing_iterations > 1:
+            if not os.path.exists(image_path):
+                imageio.imwrite(image_path, painted_image)
+        else:
+            imageio.imwrite(image_path, painted_image)
+        base64_image = encode_image_path(image_path)
         
         messages = [
             {
@@ -88,8 +97,7 @@ if __name__ == "__main__":
             },
         ]
         
-        for base64_image in images_base64:
-            messages.append(
+        messages.append(
                 {
                     "role": "system",
                     "content": f"data:image/png;base64,{base64_image}"
@@ -98,13 +106,15 @@ if __name__ == "__main__":
 
         temperature = 0.05
 
-        completion = open_ai_call_with_retry(model, messages, temperature, max_tokens=700)
+        completion = open_ai_call_with_retry(model, messages, temperature, max_tokens=1000)
         if completion:
             print(completion.choices[0].message['content'])
             
         ## only save the python code part from the completion
         completion_code = completion.choices[0].message['content'].split('```python')[1].split('```')[0]
-        with open(f'code_results/box/GPT/python_output_{i}.py', 'w') as f:
+        with open(f'code_results/box/GPT/python_output_{i}.txt', 'w') as f:
             f.write(completion_code)
-        print(f'Python code saved to python_output_{i}.py') 
+        with open(f'code_results/box/GPT/output_{i}.txt', 'w') as f:
+            f.write(completion.choices[0].message['content'])
+        print(f'Python code saved to python_output_{i}.txt') 
 

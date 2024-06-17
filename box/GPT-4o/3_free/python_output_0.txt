@@ -1,0 +1,59 @@
+
+import numpy as np
+
+# Step 1: Get the sizes of all objects
+cubeA_size = get_size('cubeA')
+cubeB_size = get_size('cubeB')
+cubeC_size = get_size('cubeC')
+cubeD_size = get_size('cubeD')
+BottleA_size = get_size('BottleA')
+BallA_size = get_size('BallA')
+
+# Create a list of objects with their heights
+objects = [
+    ('cubeA', cubeA_size[2]),
+    ('cubeB', cubeB_size[2]),
+    ('cubeC', cubeC_size[2]),
+    ('cubeD', cubeD_size[2]),
+    ('BottleA', BottleA_size[2]),
+    ('BallA', BallA_size[2])
+]
+
+# Step 2: Select the three tallest objects
+objects_sorted = sorted(objects, key=lambda x: x[1], reverse=True)
+tallest_objects = objects_sorted[:3]
+
+# Step 3: Determine the stacking order (ensure stability)
+# For simplicity, assume cubes are more stable than bottles and balls
+# Sort by stability: cubes > bottles > balls
+tallest_objects_sorted = sorted(tallest_objects, key=lambda x: ('cube' in x[0], 'Bottle' in x[0], 'Ball' in x[0]), reverse=True)
+
+# Step 4: Execute the stacking
+for i, (obj_name, _) in enumerate(tallest_objects_sorted):
+    open_gripper()
+    
+    # Get the graspable point of the object
+    graspable_point = get_graspable_point(obj_name)
+    
+    # Move to the top of the object first
+    move_to_position(np.array(graspable_point) + np.array([0, 0, 0.1]))  # Move slightly above the object
+    
+    # Move down to grasp the object
+    move_to_position(graspable_point)
+    
+    close_gripper()
+    
+    # Move to the stacking position
+    if i == 0:
+        # Place the first object on the base
+        stacking_position = np.array([0, 0, 0])
+    else:
+        # Place the next object on top of the previous one
+        stacking_position = stacking_position + np.array([0, 0, tallest_objects_sorted[i-1][1]])
+    
+    move_to_position(stacking_position + np.array([0, 0, 0.1]))  # Move slightly above the stacking position
+    move_to_position(stacking_position)
+    
+    open_gripper()
+
+# The objects are now stacked in the desired order

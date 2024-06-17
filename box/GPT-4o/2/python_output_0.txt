@@ -1,0 +1,35 @@
+
+import numpy as np  # Import numpy for any potential calculations
+
+# Open the gripper to start
+open_gripper()
+
+# Get the graspable point of cubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Move to a position above cubeA
+move_to_position(np.array(cubeA_graspable_point) + np.array([0, 0, 10]))  # Assuming 10 units above
+
+# Move down to grasp cubeA
+move_to_position(cubeA_graspable_point)
+
+# Close the gripper to grasp cubeA
+close_gripper()
+
+# Lift cubeA
+move_to_position(np.array(cubeA_graspable_point) + np.array([0, 0, 10]))  # Lift 10 units up
+
+# Get the top position of cubeB
+cubeB_top_position = get_graspable_point('cubeB')  # Assuming this gives the top center point of cubeB
+
+# Move to a position above cubeB
+move_to_position(np.array(cubeB_top_position) + np.array([0, 0, 10]))  # Assuming 10 units above
+
+# Move down to place cubeA on cubeB
+move_to_position(cubeB_top_position)
+
+# Open the gripper to release cubeA
+open_gripper()
+
+# Move the gripper away from the stacked cubes
+move_to_position(np.array(cubeB_top_position) + np.array([0, 0, 10]))  # Move 10 units up again

@@ -1,5 +1,0 @@
-# ninja log v5
-7	1337	1717709963758866960	/home/xilun/ET_robot/GroundingDINO/build/temp.linux-x86_64-3.8/home/xilun/ET_robot/GroundingDINO/groundingdino/models/GroundingDINO/csrc/cuda_version.o	cd71475e8f6a4de8
-0	7946	1717709970331199683	/home/xilun/ET_robot/GroundingDINO/build/temp.linux-x86_64-3.8/home/xilun/ET_robot/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cpu.o	21b61cf4cf549a1b
-3	19531	1717709981939787361	/home/xilun/ET_robot/GroundingDINO/build/temp.linux-x86_64-3.8/home/xilun/ET_robot/GroundingDINO/groundingdino/models/GroundingDINO/csrc/MsDeformAttn/ms_deform_attn_cuda.o	5943ebcc8299a99
-10	25770	1717709988064097399	/home/xilun/ET_robot/GroundingDINO/build/temp.linux-x86_64-3.8/home/xilun/ET_robot/GroundingDINO/groundingdino/models/GroundingDINO/csrc/vision.o	a121baec38056596

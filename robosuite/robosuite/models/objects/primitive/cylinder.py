@@ -32,9 +32,11 @@ class CylinderObject(PrimitiveObject):
 
         # We override solref, solimp, and joint default values for better stability
         if friction is None:
-            friction = [1, 0.01, 0.001]
+            # friction = [1, 0.01, 0.001]
+            friction = [0.8, 0.05, 0.05]
         if solref is None:
-            solref = [0.01, 0.5]
+            # solref = [0.01, 0.5]
+            solref = [-10000, -15]
         if joints == "default":
             joints = [{"type": "free", "damping": "0.0001"}]
 

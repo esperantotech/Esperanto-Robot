@@ -1,0 +1,82 @@
+Plan:
+
+1. Open the gripper.
+2. Get the graspable point of cubeA.
+3. Move to the position above cubeA.
+4. Move down to grasp cubeA.
+5. Close the gripper to grasp cubeA.
+6. Lift cubeA up.
+7. Move to the position above cubeB.
+8. Move down to place cubeA on cubeB.
+9. Open the gripper to release cubeA.
+10. Move up to avoid hitting cubeA.
+11. Get the graspable point of ballA.
+12. Move to the position above ballA.
+13. Move down to grasp ballA.
+14. Close the gripper to grasp ballA.
+15. Lift ballA up.
+16. Move to the position above cubeA (which is now on top of cubeB).
+17. Move down to place ballA on cubeA.
+18. Open the gripper to release ballA.
+
+Python Code:
+
+```python
+import numpy as np
+
+# Step 1
+open_gripper()
+
+# Step 2
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Step 3
+move_to_position(np.array([cubeA_graspable_point[0], cubeA_graspable_point[1], cubeA_graspable_point[2] + get_size('cubeA')[2]/2]))
+
+# Step 4
+move_to_position(cubeA_graspable_point)
+
+# Step 5
+close_gripper()
+
+# Step 6
+move_to_position(np.array([cubeA_graspable_point[0], cubeA_graspable_point[1], cubeA_graspable_point[2] + get_size('cubeA')[2]/2]))
+
+# Step 7
+cubeB_graspable_point = get_graspable_point('cubeB')
+move_to_position(np.array([cubeB_graspable_point[0], cubeB_graspable_point[1], cubeB_graspable_point[2] + get_size('cubeB')[2]/2 + get_size('cubeA')[2]/2]))
+
+# Step 8
+move_to_position(np.array([cubeB_graspable_point[0], cubeB_graspable_point[1], cubeB_graspable_point[2] + get_size('cubeB')[2]/2]))
+
+# Step 9
+open_gripper()
+
+# Step 10
+move_to_position(np.array([cubeB_graspable_point[0], cubeB_graspable_point[1], cubeB_graspable_point[2] + get_size('cubeB')[2]/2 + get_size('cubeA')[2]/2]))
+
+# Step 11
+ballA_graspable_point = get_graspable_point('ballA')
+
+# Step 12
+move_to_position(np.array([ballA_graspable_point[0], ballA_graspable_point[1], ballA_graspable_point[2] + get_size('ballA')[2]/2]))
+
+# Step 13
+move_to_position(ballA_graspable_point)
+
+# Step 14
+close_gripper()
+
+# Step 15
+move_to_position(np.array([ballA_graspable_point[0], ballA_graspable_point[1], ballA_graspable_point[2] + get_size('ballA')[2]/2]))
+
+# Step 16
+move_to_position(np.array([cubeB_graspable_point[0], cubeB_graspable_point[1], cubeB_graspable_point[2] + get_size('cubeB')[2]/2 + get_size('cubeA')[2] + get_size('ballA')[2]/2]))
+
+# Step 17
+move_to_position(np.array([cubeB_graspable_point[0], cubeB_graspable_point[1], cubeB_graspable_point[2] + get_size('cubeB')[2]/2 + get_size('cubeA')[2])))
+
+# Step 18
+open_gripper()
+```
+Please note that the above code assumes that the z-coordinate of the graspable point is at the bottom of the object. If it's at the center, you would need to adjust the z-coordinate calculations accordingly.

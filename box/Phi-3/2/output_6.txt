@@ -1,0 +1,33 @@
+ Step 1: Identify the graspable point on cubeA and cubeB
+Step 2: Move the robotic arm to the graspable point on cubeA
+Step 3: Open the gripper
+Step 4: Move the robotic arm to the graspable point on cubeB
+Step 5: Close the gripper to stack cubeA on top of cubeB
+
+Here is the corresponding Python code:
+
+```python
+import numpy as np
+
+# Open the gripper
+open_gripper()
+
+# Get the graspable point on cubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Move the robotic arm to the graspable point on cubeA
+move_to_position(cubeA_graspable_point)
+
+# Open the gripper
+open_gripper()
+
+# Get the graspable point on cubeB
+cubeB_graspable_point = get_graspable_point('cubeB')
+
+# Move the robotic arm to the graspable point on cubeB
+move_to_position(cubeB_graspable_point)
+
+# Close the gripper to stack cubeA on top of cubeB
+close_gripper()
+```
+This code follows the steps outlined above to successfully stack cubeA on top of cubeB. The robotic arm first opens its gripper, moves to the graspable point on cubeA, opens its gripper again, moves to the graspable point on cubeB, and finally closes its gripper to stack cubeA on top of cubeB.

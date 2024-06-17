@@ -1,0 +1,40 @@
+
+import numpy as np  # Import numpy for any necessary calculations
+
+# Step 1: Open the gripper
+open_gripper()
+
+# Step 2: Get the graspable point of cubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Step 3: Move the gripper above cubeA
+above_cubeA = np.array(cubeA_graspable_point) + np.array([0, 0, 0.1])  # Assuming 0.1 units above
+move_to_position(above_cubeA)
+
+# Step 4: Move the gripper down to the graspable point of cubeA
+move_to_position(cubeA_graspable_point)
+
+# Step 5: Close the gripper to grasp cubeA
+close_gripper()
+
+# Step 6: Get the size of cubeB to determine its height
+cubeB_size = get_size('cubeB')
+cubeB_height = cubeB_size[2]  # Assuming the height is the third element
+
+# Step 7: Get the graspable point of cubeB
+cubeB_graspable_point = get_graspable_point('cubeB')
+
+# Step 8: Move the gripper above cubeB
+above_cubeB = np.array(cubeB_graspable_point) + np.array([0, 0, cubeB_height + 0.1])  # 0.1 units above the top of cubeB
+move_to_position(above_cubeB)
+
+# Step 9: Move the gripper down to the top of cubeB
+top_of_cubeB = np.array(cubeB_graspable_point) + np.array([0, 0, cubeB_height])
+move_to_position(top_of_cubeB)
+
+# Step 10: Open the gripper to release cubeA
+open_gripper()
+
+# Step 11: Move the gripper away to a safe position
+safe_position = np.array(top_of_cubeB) + np.array([0, 0, 0.1])  # Move up 0.1 units
+move_to_position(safe_position)

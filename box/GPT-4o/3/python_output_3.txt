@@ -1,0 +1,51 @@
+
+import numpy as np
+
+# Step 1: Open the gripper
+open_gripper()
+
+# Step 2: Move to the top of cubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+cubeA_size = get_size('cubeA')
+move_to_position(cubeA_graspable_point + np.array([0, 0, cubeA_size[2] / 2 + 0.1]))  # Move above cubeA
+
+# Step 3: Move down to grasp cubeA and close the gripper
+move_to_position(cubeA_graspable_point)
+close_gripper()
+
+# Step 4: Lift cubeA to a safe height
+move_to_position(cubeA_graspable_point + np.array([0, 0, cubeA_size[2] / 2 + 0.2]))
+
+# Step 5: Move to the top of cubeB
+cubeB_graspable_point = get_graspable_point('cubeB')
+cubeB_size = get_size('cubeB')
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] / 2 + cubeA_size[2] + 0.1]))  # Move above cubeB
+
+# Step 6: Move down to place cubeA on cubeB and open the gripper
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] / 2 + cubeA_size[2] / 2]))
+open_gripper()
+
+# Step 7: Lift the gripper to a safe height
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] / 2 + cubeA_size[2] + 0.1]))
+
+# Step 8: Move to the top of ballA
+ballA_graspable_point = get_graspable_point('ballA')
+ballA_size = get_size('ballA')
+move_to_position(ballA_graspable_point + np.array([0, 0, ballA_size[2] / 2 + 0.1]))  # Move above ballA
+
+# Step 9: Move down to grasp ballA and close the gripper
+move_to_position(ballA_graspable_point)
+close_gripper()
+
+# Step 10: Lift ballA to a safe height
+move_to_position(ballA_graspable_point + np.array([0, 0, ballA_size[2] / 2 + 0.2]))
+
+# Step 11: Move to the top of cubeA (which is now on cubeB)
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] / 2 + cubeA_size[2] + ballA_size[2] / 2 + 0.1]))  # Move above cubeA on cubeB
+
+# Step 12: Move down to place ballA on cubeA and open the gripper
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] / 2 + cubeA_size[2] + ballA_size[2] / 2]))
+open_gripper()
+
+# Step 13: Lift the gripper to a safe height
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] / 2 + cubeA_size

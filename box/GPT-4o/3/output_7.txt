@@ -1,0 +1,66 @@
+### Step-by-Step Plan
+
+1. **Initialize and Open Gripper**: Start by opening the gripper to ensure it is ready to grasp objects.
+2. **Grasp CubeA**:
+   - Move above CubeA.
+   - Move down to grasp CubeA.
+   - Close the gripper to secure CubeA.
+3. **Move CubeA Above CubeB**:
+   - Move up to avoid collision with other objects.
+   - Move to a position above CubeB.
+   - Move down to place CubeA on CubeB.
+   - Open the gripper to release CubeA.
+4. **Grasp BallA**:
+   - Move up to avoid collision with CubeA.
+   - Move above BallA.
+   - Move down to grasp BallA.
+   - Close the gripper to secure BallA.
+5. **Move BallA Above CubeA**:
+   - Move up to avoid collision with other objects.
+   - Move to a position above CubeA (which is now on CubeB).
+   - Move down to place BallA on CubeA.
+   - Open the gripper to release BallA.
+6. **Final Position**:
+   - Move up to a safe position to avoid any collisions.
+
+### Python Code
+
+```python
+import numpy as np
+
+# Initialize and open the gripper
+open_gripper()
+
+# Step 1: Grasp CubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+move_to_position(cubeA_graspable_point + np.array([0, 0, 0.1]))  # Move above CubeA
+move_to_position(cubeA_graspable_point)  # Move down to grasp CubeA
+close_gripper()
+
+# Step 2: Move CubeA above CubeB
+cubeB_graspable_point = get_graspable_point('cubeB')
+cubeB_size = get_size('cubeB')
+move_to_position(cubeA_graspable_point + np.array([0, 0, 0.1]))  # Move up with CubeA
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + 0.1]))  # Move above CubeB
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2]]))  # Move down to place CubeA on CubeB
+open_gripper()
+
+# Step 3: Grasp BallA
+ballA_graspable_point = get_graspable_point('ballA')
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + 0.1]))  # Move up to avoid collision
+move_to_position(ballA_graspable_point + np.array([0, 0, 0.1]))  # Move above BallA
+move_to_position(ballA_graspable_point)  # Move down to grasp BallA
+close_gripper()
+
+# Step 4: Move BallA above CubeA
+cubeA_size = get_size('cubeA')
+move_to_position(ballA_graspable_point + np.array([0, 0, 0.1]))  # Move up with BallA
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + cubeA_size[2] + 0.1]))  # Move above CubeA
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + cubeA_size[2]]))  # Move down to place BallA on CubeA
+open_gripper()
+
+# Step 5: Move to a safe position
+move_to_position(cubeB_graspable_point + np.array([0, 0, cubeB_size[2] + cubeA_size[2] + 0.1]))  # Move up to a safe position
+```
+
+This code follows the step-by-step plan to ensure that the robotic arm performs the task of stacking CubeA and BallA on CubeB in a stable manner.

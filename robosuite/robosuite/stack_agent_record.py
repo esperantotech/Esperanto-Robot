@@ -20,12 +20,12 @@ from robosuite.environments.manipulation.stack import Stack
 
 class ArmClient:
 
-    def __init__(self, vis=False):
-        self.task = "Magnetic"
+    def __init__(self, vis=False, agent="LLaVa"):
+        self.task = "Stack"
         self.vis = vis
         self.recording = True
         self.print_vals = False
-        self.create_env()
+        self.create_env(agent=agent)
 
     def reset(self):
         # TODO: need to reset the whole environment, instead of the super object
@@ -67,27 +67,27 @@ class ArmClient:
             "get_workspace_range": self.get_workspace_range,
         }
 
-    def create_env(self):
+    def create_env(self, agent="LLaVa"):
         log_video = False
 
         config = load_controller_config(default_controller="OSC_POSE")
 
         self.env = Stack(
             robots="Kinova3",  # try with other robots like "Sawyer" and "Jaco"
-            has_renderer=True,
+            has_renderer=False,
             has_offscreen_renderer=True,
             use_camera_obs=True,
             controller_configs=config,
-            camera_names="sideview",
+            camera_names="frontview",
             control_freq=20,
         )
         self.obs = self.env.reset()
         if self.vis:
-            # 0: front, 1: top, 2: zoom in front far, 3: side robot left, 4: zoom in front close, 5: inhand,
+            # 0: front, 1: top, 2: zoom in front far, 3: front robot left, 4: zoom in front close, 5: inhand,
             self.env.viewer.set_camera(camera_id=3)
         if self.recording:
             self.writer = imageio.get_writer(
-                "./dummyDemo_video.mp4", fps=self.env.control_freq
+                f"./code_results/box/{agent}/dummyDemo_video.mp4", fps=self.env.control_freq
             )
 
         self.robot_ee_pos = copy.deepcopy(
@@ -99,7 +99,7 @@ class ArmClient:
         self.additional_scale = 0.2
         self.world_to_base = np.array([-0.9, 0.0, 0.8])
         self.filter_obj_list = ["cubeA", "cubeB"]
-        self.workspace_min = [-0.5, -0.25, 0.02]
+        self.workspace_min = [-0.2, -0.2, 0.8]
         self.workspace_max = [0.50, 0.25, 0.9]
 
     def parse_scene_info(self):
@@ -159,11 +159,11 @@ class ArmClient:
 
         self.env = Stack(
             robots="Kinova3",  # try with other robots like "Sawyer" and "Jaco"
-            has_renderer=False,
+            has_renderer=vis,
             has_offscreen_renderer=True,
             use_camera_obs=True,
             controller_configs=config,
-            camera_names="sideview",
+            camera_names="frontview",
             control_freq=20,
         )
         self.env.reset()
@@ -183,11 +183,12 @@ class ArmClient:
             # action = np.random.uniform(low, high)
             action = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0])
             self.obs, reward, done, info = self.env.step(action)
+            ## get robot joint positions
             if self.print_vals:
                 print("action", action)
             if writer is not None:
                 writer.append_data(
-                    cv2.rotate(self.obs["sideview_image"], cv2.ROTATE_180)
+                    cv2.rotate(self.obs["frontview_image"], cv2.ROTATE_180)
                 )
             if vis:
                 self.env.render()
@@ -287,7 +288,7 @@ class ArmClient:
             action[:3][np.abs(target_robot_pos - current_robot_pos) < 0.001] = 0.0
             if self.print_vals:
                 print("after smooth action", action)
-
+            print ("action", action)
             self.obs, reward, done, info = self.env.step(action)
             if self.print_vals:
                 print("i", i, "out of", max_steps)
@@ -296,7 +297,7 @@ class ArmClient:
             if self.vis:
                 self.env.render()
             if self.writer is not None:
-                self.writer.append_data(cv2.flip(self.obs["sideview_image"], 0))
+                self.writer.append_data(cv2.flip(self.obs["frontview_image"], 0))
         if self.print_vals:
             print("finish move to position")
             print(
@@ -315,7 +316,7 @@ class ArmClient:
             if self.vis:
                 self.env.render()
             if self.writer is not None:
-                self.writer.append_data(cv2.flip(self.obs["sideview_image"], 0))
+                self.writer.append_data(cv2.flip(self.obs["frontview_image"], 0))
         if self.print_vals:
             print("finish open gripper")
             print("robot position", self.obs["robot0_eef_pos"])
@@ -329,7 +330,7 @@ class ArmClient:
             if self.vis:
                 self.env.render()
             if self.writer is not None:
-                self.writer.append_data(cv2.flip(self.obs["sideview_image"], 0))
+                self.writer.append_data(cv2.flip(self.obs["frontview_image"], 0))
         if self.print_vals:
             print("finish close gripper")
 
@@ -469,13 +470,20 @@ def reevaluate_codes():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file_name', type=str, help="file_name", required=True)
+    parser.add_argument('--agent', type=str, help="agent", default='LLaVa')
     args = parser.parse_args()
 
-    agent = ArmClient(vis=False)
+    agent = ArmClient(vis=False, agent=args.agent)
     save_path = (
         os.getcwd()
-        + f"/code_results/box/"
+        + f"/code_results/box/{args.agent}"
     )
+    
+    save_path = (
+        os.getcwd()
+        + f"/code_results/box"
+    )
+    
     # file_path = "./test_script.txt"
     file_path = os.path.join(save_path, args.file_name)
     print('file path')

@@ -165,8 +165,8 @@ class Stack(SingleArmEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mujoco",
         renderer_config=None,
-        cube_A_pos = [0.05, 0.0, 0.1],
-        cube_B_pos = [-0.1, 0.05, 0.1],
+        cube_B_pos = [0.05, 0.0, 0.1],
+        cube_A_pos = [-0.1, 0.05, 0.1],
     ):
         # settings for table top
         self.table_full_size = table_full_size
@@ -345,15 +345,17 @@ class Stack(SingleArmEnv):
         )
         self.cubeA = BoxObject(
             name="cubeA",
-            size_min=[0.02, 0.02, 0.02],
-            size_max=[0.02, 0.02, 0.02],
+            size = [0.02, 0.02, 0.02],
+            # size_min=[0.02, 0.02, 0.02],
+            # size_max=[0.02, 0.02, 0.02],
             rgba=[1, 0, 0, 1],
             material=redwood,
         )
         self.cubeB = BoxObject(
             name="cubeB",
-            size_min=[0.025, 0.025, 0.025],
-            size_max=[0.025, 0.025, 0.025],
+            size = [0.03, 0.03, 0.03],
+            # size_min=[0.025, 0.025, 0.025],
+            # size_max=[0.025, 0.025, 0.025],
             rgba=[0, 1, 0, 1],
             material=greenwood,
         )
@@ -372,10 +374,10 @@ class Stack(SingleArmEnv):
             mujoco_objects=self.cubeA,
             x_range=[self.cube_A_pos[0], self.cube_A_pos[0]],
             y_range=[self.cube_A_pos[1], self.cube_A_pos[1]],
-            rotation=None,
+            rotation=0,
             rotation_axis="z",
             ensure_object_boundary_in_range=False,
-            ensure_valid_placement=False,
+            ensure_valid_placement=True,
             reference_pos=self.table_offset,
             z_offset=0.01,
         ))
@@ -384,10 +386,10 @@ class Stack(SingleArmEnv):
             mujoco_objects=self.cubeB,
             x_range=[self.cube_B_pos[0], self.cube_B_pos[0]],
             y_range=[self.cube_B_pos[1], self.cube_B_pos[1]],
-            rotation=None,
+            rotation=0,
             rotation_axis="z",
             ensure_object_boundary_in_range=False,
-            ensure_valid_placement=False,
+            ensure_valid_placement=True,
             reference_pos=self.table_offset,
             z_offset=0.01,
         ))

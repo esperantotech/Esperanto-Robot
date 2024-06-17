@@ -1,0 +1,55 @@
+
+import numpy as np  # Import numpy for any potential calculations
+
+# Step 1: Open the gripper
+open_gripper()
+
+# Step 2: Get the graspable point of CubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Step 3: Move above CubeA
+move_to_position(cubeA_graspable_point + np.array([0, 0, 0.1]))  # Move slightly above CubeA
+
+# Step 4: Move down to grasp CubeA
+move_to_position(cubeA_graspable_point)
+
+# Step 5: Close the gripper to grasp CubeA
+close_gripper()
+
+# Step 6: Lift CubeA
+move_to_position(cubeA_graspable_point + np.array([0, 0, 0.1]))  # Lift CubeA
+
+# Step 7: Get the graspable point of CubeB
+cubeB_graspable_point = get_graspable_point('cubeB')
+
+# Step 8: Move above CubeB
+move_to_position(cubeB_graspable_point + np.array([0, 0, 0.1]))  # Move slightly above CubeB
+
+# Step 9: Move down to place CubeA on CubeB
+move_to_position(cubeB_graspable_point + np.array([0, 0, get_size('cubeB')[2]]))  # Adjust for the height of CubeB
+
+# Step 10: Open the gripper to release CubeA
+open_gripper()
+
+# Step 11: Lift the gripper
+move_to_position(cubeB_graspable_point + np.array([0, 0, 0.1 + get_size('cubeB')[2]]))  # Lift above CubeB
+
+# Step 12: Get the graspable point of BallA
+ballA_graspable_point = get_graspable_point('ballA')
+
+# Step 13: Move above BallA
+move_to_position(ballA_graspable_point + np.array([0, 0, 0.1]))  # Move slightly above BallA
+
+# Step 14: Move down to grasp BallA
+move_to_position(ballA_graspable_point)
+
+# Step 15: Close the gripper to grasp BallA
+close_gripper()
+
+# Step 16: Lift BallA
+move_to_position(ballA_graspable_point + np.array([0, 0, 0.1]))  # Lift BallA
+
+# Step 17: Move above CubeA (on CubeB)
+move_to_position(cubeB_graspable_point + np.array([0, 0, 0.1 + get_size('cubeB')[2] + get_size('cubeA')[2]]))  # Adjust for the height of CubeB and CubeA
+
+# Step 18: Move

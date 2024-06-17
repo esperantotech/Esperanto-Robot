@@ -1,0 +1,49 @@
+ Step 1: Identify the largest object among cubeA, cubeB, cubeC, and cubeD. This will be the base of our stack.
+Step 2: Identify the smallest object among cubeA, cubeB, cubeC, and cubeD. This will be the top of our stack.
+Step 3: Identify the object that can fit in between the base and the top. This will be the middle object.
+Step 4: Use the robotic arm to move to the graspable point of the base object.
+Step 5: Close the gripper to grasp the base object.
+Step 6: Move the robotic arm to the graspable point of the middle object.
+Step 7: Close the gripper to grasp the middle object.
+Step 8: Move the robotic arm to the graspable point of the top object.
+Step 9: Close the gripper to grasp the top object.
+Step 10: Stack the objects together in the desired order.
+
+Here is the corresponding Python code:
+
+```python
+import numpy as np
+
+# Assuming get_graspable_point, get_size, open_gripper, close_gripper, move_to_position are pre-defined functions
+
+# Step 1: Identify the largest object
+largest_object = max([('cubeA', get_size('cubeA')), ('cubeB', get_size('cubeB')), ('cubeC', get_size('cubeC')), ('cubeD', get_size('cubeD'))], key=lambda x: x[1])[0]
+
+# Step 2: Identify the smallest object
+smallest_object = min([('cubeA', get_size('cubeA')), ('cubeB', get_size('cubeB')), ('cubeC', get_size('cubeC')), ('cubeD', get_size('cubeD'))], key=lambda x: x[1])[0]
+
+# Step 3: Identify the middle object
+middle_object = min([('cubeA', get_size('cubeA')), ('cubeB', get_size('cubeB')), ('cubeC', get_size('cubeC')), ('cubeD', get_size('cubeD'))], key=lambda x: x[1])[0]
+
+# Step 4: Move to the graspable point of the base object
+base_graspable_point = get_graspable_point(largest_object)
+open_gripper()
+move_to_position(base_graspable_point)
+close_gripper()
+
+# Step 5: Move to the graspable point of the middle object
+middle_graspable_point = get_graspable_point(middle_object)
+open_gripper()
+move_to_position(middle_graspable_point)
+close_gripper()
+
+# Step 6: Move to the graspable point of the top object
+top_graspable_point = get_graspable_point(smallest_object)
+open_gripper()
+move_to_position(top_graspable_point)
+close_gripper()
+
+# Step 7: Stack the objects together
+# Assuming there is a function to stack objects called stack_objects
+stack_objects(largest_object, middle_object, smallest_object)
+```

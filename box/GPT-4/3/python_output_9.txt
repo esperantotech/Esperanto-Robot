@@ -1,0 +1,65 @@
+
+import numpy as np
+
+# Step 1
+open_gripper()
+
+# Step 2
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Step 3
+move_to_position(cubeA_graspable_point + np.array([0, 0, 1]))
+
+# Step 4
+move_to_position(cubeA_graspable_point)
+
+# Step 5
+close_gripper()
+
+# Step 6
+move_to_position(cubeA_graspable_point + np.array([0, 0, 1]))
+
+# Step 7
+cubeB_size = get_size('cubeB')
+
+# Step 8
+move_to_position(cubeB_size + np.array([0, 0, 1]))
+
+# Step 9
+move_to_position(cubeB_size)
+
+# Step 10
+open_gripper()
+
+# Step 11
+move_to_position(cubeB_size + np.array([0, 0, 1]))
+
+# Step 12
+ballA_graspable_point = get_graspable_point('ballA')
+
+# Step 13
+move_to_position(ballA_graspable_point + np.array([0, 0, 1]))
+
+# Step 14
+move_to_position(ballA_graspable_point)
+
+# Step 15
+close_gripper()
+
+# Step 16
+move_to_position(ballA_graspable_point + np.array([0, 0, 1]))
+
+# Step 17
+cubeA_size = get_size('cubeA')
+
+# Step 18
+move_to_position(cubeA_size + np.array([0, 0, 1]))
+
+# Step 19
+move_to_position(cubeA_size)
+
+# Step 20
+open_gripper()
+
+# Step 21
+move_to_position(cubeA_size + np.array([0, 0, 1]))
