@@ -1,0 +1,26 @@
+
+import numpy as np  # import numpy for spatial calculations
+
+# Open the gripper
+open_gripper()
+
+# Get the graspable point of cubeA
+cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Move to the graspable point of cubeA and close the gripper to grasp it
+move_to_position(cubeA_graspable_point)
+close_gripper()
+
+# Move to the position of cubeB and open the gripper to release cubeA
+cubeB_position = get_position('cubeB')  # Assuming a function to get the position of cubeB
+move_to_position(cubeB_position)
+open_gripper()
+
+# Now, repeat the process for ballA
+ballA_graspable_point = get_graspable_point('ballA')
+move_to_position(ballA_graspable_point)
+close_gripper()
+
+# Move to the position of cubeB and open the gripper to release ballA
+move_to_position(cubeB_position)  # Assuming the position of cubeB doesn't change
+open_gripper()

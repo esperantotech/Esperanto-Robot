@@ -14,7 +14,7 @@ move_to_position(cubeA_graspable_point)
 open_gripper()
 
 # Move the robotic arm to the top of CubeB
-cubeB_top_position = get_size('cubeB') + np.array([0, 0, 1])  # Assuming the size of CubeB is known
+cubeB_top_position = get_size('cubeB') + np.array([0, cubeB_size[1], 0])
 move_to_position(cubeB_top_position)
 
 # Close the gripper to grasp CubeA

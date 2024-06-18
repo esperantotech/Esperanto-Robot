@@ -4,7 +4,7 @@ import numpy as np
 # Open the gripper
 open_gripper()
 
-# Get the graspable point on cubeA
+# Get the graspable point of cubeA
 cubeA_graspable_point = get_graspable_point('cubeA')
 
 # Move to the graspable point on cubeA
@@ -13,11 +13,25 @@ move_to_position(cubeA_graspable_point)
 # Open the gripper to pick up cubeA
 open_gripper()
 
-# Get the graspable point on cubeB
-cubeB_graspable_point = get_graspable_point('cubeB')
+# Get the graspable point of ballA
+ballA_graspable_point = get_graspable_point('ballA')
 
-# Move to the graspable point on cubeB
-move_to_position(cubeB_graspable_point)
+# Move to the graspable point on ballA
+move_to_position(ballA_graspable_point)
 
-# Close the gripper to place cubeA on cubeB
+# Close the gripper to pick up ballA
 close_gripper()
+
+# Move to the position of cubeB
+cubeB_position = get_position('cubeB')
+move_to_position(cubeB_position)
+
+# Open the gripper to release cubeA
+open_gripper()
+
+# Close the gripper to release ballA
+close_gripper()
+
+# Move the robotic arm back to the initial position
+initial_position = get_position('initial_position')
+move_to_position(initial_position)

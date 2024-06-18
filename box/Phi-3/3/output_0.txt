@@ -1,8 +1,11 @@
- Step 1: Identify the graspable point on cubeA and the position where cubeA should be placed on cubeB.
-Step 2: Move the robotic arm to the graspable point on cubeA.
-Step 3: Open the gripper to pick up cubeA.
-Step 4: Move the robotic arm to the position on cubeB where cubeA should be placed.
-Step 5: Close the gripper to place cubeA on cubeB.
+ Step 1: Identify the graspable points on cubeA and ballA.
+Step 2: Determine the size of cubeA and ballA to ensure the gripper can hold them.
+Step 3: Move the gripper to the top-most graspable point on cubeA.
+Step 4: Close the gripper to secure cubeA.
+Step 5: Move the gripper to the top-most graspable point on ballA.
+Step 6: Close the gripper to secure ballA.
+Step 7: Move the gripper to the position where cubeA and ballA will be stacked on cubeB.
+Step 8: Open the gripper to release cubeA and ballA onto cubeB.
 
 Here is the corresponding Python code:
 
@@ -12,23 +15,30 @@ import numpy as np
 # Open the gripper
 open_gripper()
 
-# Get the graspable point on cubeA
+# Get the graspable point of cubeA
 cubeA_graspable_point = get_graspable_point('cubeA')
 
-# Move the robotic arm to the graspable point on cubeA
+# Move to the top-most graspable point on cubeA
 move_to_position(cubeA_graspable_point)
 
-# Open the gripper to pick up cubeA
-open_gripper()
-
-# Get the position on cubeB where cubeA should be placed
-cubeB_position = get_position('cubeB')
-
-# Move the robotic arm to the position on cubeB
-move_to_position(cubeB_position)
-
-# Close the gripper to place cubeA on cubeB
+# Close the gripper to secure cubeA
 close_gripper()
-```
 
-Note: The function `get_position('cubeB')` is assumed to return the position where cubeB is located. The actual implementation of this function would depend on the specifics of the environment and the robotic arm's capabilities.
+# Get the graspable point of ballA
+ballA_graspable_point = get_graspable_point('ballA')
+
+# Move to the top-most graspable point on ballA
+move_to_position(ballA_graspable_point)
+
+# Close the gripper to secure ballA
+close_gripper()
+
+# Get the graspable point of cubeB
+cubeB_graspable_point = get_graspable_point('cubeB')
+
+# Move to the position where cubeA and ballA will be stacked on cubeB
+move_to_position(cubeB_graspable_point)
+
+# Open the gripper to release cubeA and ballA onto cubeB
+open_gripper()
+```

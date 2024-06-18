@@ -4,20 +4,29 @@ import numpy as np
 # Open the gripper
 open_gripper()
 
-# Get the graspable point on cubeA
+# Get the graspable point of cubeA
 cubeA_graspable_point = get_graspable_point('cubeA')
 
-# Move to the graspable point on cubeA
+# Move to the top-center graspable point of cubeA
 move_to_position(cubeA_graspable_point)
 
-# Open the gripper to pick up cubeA
-open_gripper()
+# Close the gripper to secure cubeA
+close_gripper()
 
-# Get the graspable point on cubeB
+# Get the graspable point of ballA
+ballA_graspable_point = get_graspable_point('ballA')
+
+# Move to the top-center graspable point of ballA
+move_to_position(ballA_graspable_point)
+
+# Close the gripper to secure ballA
+close_gripper()
+
+# Get the graspable point of cubeB
 cubeB_graspable_point = get_graspable_point('cubeB')
 
-# Move to the graspable point on cubeB
+# Move to the position where cubeA and ballA can be stacked on cubeB
 move_to_position(cubeB_graspable_point)
 
-# Close the gripper to place cubeA on cubeB
-close_gripper()
+# Open the gripper to release cubeA and ballA onto cubeB
+open_gripper()

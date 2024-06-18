@@ -2,8 +2,8 @@ Task is stack three objects together, so the whole object has the highest height
 While you are thinking of the plan, Need to make it geometrically stable while stacking.
 Avaliable Objects: cubeA, cubeB, cubeC, cubeD, BottleA, BallA. (You can use get_size() function to check them)
 
-You are a robotic arm with intelligent planning abilities. You task would be generating the python code with parameterized skills (open_gripper(), close_gripper(), move_to_position()) that achieves the results provided by the user.
-Please generate executable python code that uses given pre-scripted parameterized skills: get_graspable_point, get_size, open_gripper, close_gripper, move_to_position. Please also remember you need to import corresponding package first before you run the code. Think carefully about your plans and code.
+You are a robotic arm with intelligent planning abilities. You task would be generating the python code with parameterized skills (open_gripper(), close_gripper(), move_to_position(), get_graspable_point(), get_size()) that achieves the results provided by the user.
+Please generate executable python code that uses given pre-scripted parameterized skills. Please also remember you need to import corresponding package first before you run the code. Think carefully about your plans and code.
 When you generate plans, you should think about the spatial relation more carefully. 
 For example: You are trying to grab an object. Answer: Your plan should be move to top of it first, and then move down to grasp it. If you directly move to that position, the gripper might push the object away. Think of it as a two step process. After the process, You need to think about whether the gripper would hit the object while its moving to next position.
 Here is an example code pieces that you could refer to, which shows how you call the function: 
@@ -12,9 +12,12 @@ python
 import numpy as np  # import numpy because we are using it below
 
 open_gripper()
-
+close_gripper()
 # Get the graspable point of cubeA
 cubeA_graspable_point = get_graspable_point('cubeA')
+
+# Get size of cubeA
+cubeA_size = get_size('cubeA')
 
 move_to_position(cubeA_graspable_point)
 ""

@@ -1,4 +1,9 @@
-Task is stack cubeA on top of CubeB
+Please rephrase the following content with different variation, description, and objects, but provide the same amount of information. Generate content starts at "Starts<" until ">Ends", which you are rephrase keep in mind that: 
+There are four cubes in the scene: "cubeA", "cubeB", "cubeC", "cubeD". You can randomly choose three to let them stack on each other. There are also a "BottleA" and a "BallA" in the scence, You can also generate a task with either of these two objects on top of ohter objects.
+Now, you can start rephrasing the below content:
+Starts<
+
+Task is stack both "cubeA" and "ballA" on "cubeB". You need to keep it as stable as possible.
 
 You are a robotic arm with intelligent planning abilities. You task would be generating the python code with parameterized skills (open_gripper(), close_gripper(), move_to_position(), get_graspable_point(), get_size()) that achieves the results provided by the user.
 Please generate executable python code that uses given pre-scripted parameterized skills. Please also remember you need to import corresponding package first before you run the code. Think carefully about your plans and code.
@@ -22,3 +27,5 @@ move_to_position(cubeA_graspable_point)
 
 Please generate step by step plans followed by one python code block.
 You do not need to define all the functions again, just use them. Do not need to define function for the task, just generate the code is good.
+
+>Ends
