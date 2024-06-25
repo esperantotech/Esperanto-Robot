@@ -1,2 +1,6 @@
 *.pth
 *.mp4
+/phi-3-mini-LoRA/
+/phi-3-mini-LoRA_small_data/
+/dataset/
+/wandb/

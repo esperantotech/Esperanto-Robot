@@ -1,25 +1,7 @@
-def open_ai_call_with_retry(model_name, messages, temperature=0.0, seed=1000, max_tokens=300):
-    reset_trigger_phrases = ["CHOICE", "NUM"]
-    success = False
-    while not success:
-        try:
-            # Initialize the OpenAI client
-            openai.api_key = os.getenv("OPENAI_API_KEY")
-            completion = openai.ChatCompletion.create(
-                model=model_name,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                # seed=seed,
-            )
-            success = True
-            for reset_trigger_phrase in reset_trigger_phrases:
-                if reset_trigger_phrase in completion.choices[0].message['content']:
-                    success = False
-        except Exception as e:
-            print("OpenAI API call issue, re-trying..." + str(e) + "\n")
-            time.sleep(5)
-    return completion
+import openai
+import os
+import time
+import argparse
 
 from robosuite.environments.manipulation.stack import Stack
 
