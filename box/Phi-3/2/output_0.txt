@@ -1,40 +1,73 @@
- Step 1: Identify the graspable point on CubeA
-Step 2: Move the robotic arm to the identified graspable point on CubeA
-Step 3: Open the gripper
-Step 4: Move the robotic arm to the top of CubeB
-Step 5: Close the gripper to grasp CubeA
-Step 6: Move the robotic arm to the top of CubeB
-Step 7: Release CubeA
+ To stack cubeA on top of cubeB, we need to follow these steps:
 
-Here is the corresponding Python code:
+1. Identify the position of cubeB.
+2. Move to the position of cubeB.
+3. Open the gripper.
+4. Move down to grasp cubeB.
+5. Close the gripper to grasp cubeB.
+6. Move to the position above cubeB.
+7. Open the gripper.
+8. Move down to grasp cubeA.
+9. Close the gripper to grasp cubeA.
+10. Move up to place cubeA on top of cubeB.
+11. Close the gripper to release cubeA.
+
+Here's a sample Python code to execute the above plan:
 
 ```python
-import numpy as np
+# Define the functions for the robotic arm
+def open_gripper():
+    # Code to open the gripper
+    pass
 
-# Open the gripper
+def close_gripper():
+    # Code to close the gripper
+    pass
+
+def move_to_position(x, y, z):
+    # Code to move the robotic arm to the specified position
+    pass
+
+def get_graspable_point():
+    # Code to identify the graspable point on the object
+    pass
+
+def get_size():
+    # Code to get the size of the object
+    pass
+
+# Step 1: Identify the position of cubeB
+cubeB_position = (x1, y1, z1)
+
+# Step 2: Move to the position of cubeB
+move_to_position(*cubeB_position)
+
+# Step 3: Open the gripper
 open_gripper()
 
-# Get the graspable point on CubeA
-cubeA_graspable_point = get_graspable_point('cubeA')
-
-# Move the robotic arm to the graspable point on CubeA
-move_to_position(cubeA_graspable_point)
-
-# Open the gripper to grasp CubeA
-open_gripper()
-
-# Move the robotic arm to the top of CubeB
-cubeB_top_position = get_size('cubeB') + np.array([0, cubeB_size[1], 0])
-move_to_position(cubeB_top_position)
-
-# Close the gripper to grasp CubeA
+# Step 4: Move down to grasp cubeB
+cubeB_grasp_point = get_graspable_point()
+move_to_position(*cubeB_grasp_point)
 close_gripper()
 
-# Move the robotic arm to the top of CubeB
-move_to_position(cubeB_top_position)
+# Step 6: Move to the position above cubeB
+cubeB_position_above = (x1, y1, z1 + cubeB_size)
+move_to_position(*cubeB_position_above)
 
-# Release CubeA
+# Step 7: Open the gripper
+open_gripper()
+
+# Step 8: Move down to grasp cubeA
+cubeA_grasp_point = get_graspable_point()
+move_to_position(*cubeA_grasp_point)
+close_gripper()
+
+# Step 10: Move up to place cubeA on top of cubeB
+cubeA_position_on_cubeB = (x1, y1, z1 + cubeA_size)
+move_to_position(*cubeA_position_on_cubeB)
+
+# Step 11: Close the gripper to release cubeA
 close_gripper()
 ```
 
-Note: The code assumes that the size of CubeB is known and stored in the variable `cubeB_size`. The `get_size('cubeB')` function returns the size of CubeB as a numpy array. The `move_to_position()` function takes a numpy array representing the position to move the robotic arm to. The `get_graspable_point('cubeA')` function returns the graspable point on CubeA as a numpy array.
+Note: Replace `x1`, `y1`, `z1`, `cubeB_size`, and `cubeA_size` with the actual values for the positions and sizes of cubeB and cubeA.

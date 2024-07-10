@@ -49,7 +49,6 @@ def single_GPU_FT():
         return data
 
 
-
     # Load your dataset
     # dataset = load_dataset('json', data_files={'train': '/home/xilun/ET_robot/updated_two_stack_dataset.json', 'validation': '/home/xilun/ET_robot/updated_three_stack_dataset.json'})
     dataset = load_dataset('json', data_files={'train': '/home/xilun/ET_robot/dataset/all_data.json', 'validation': '/home/xilun/ET_robot/dataset/172_dataset.json'})
@@ -60,9 +59,6 @@ def single_GPU_FT():
         inputs = examples['input']
         targets = examples['output']
         model_inputs = tokenizer(inputs, max_length=max_length, truncation=True, padding="max_length")
-        # print (model_inputs['input_ids'][1])
-        # print (model_inputs['attention_mask'][1])
-        # input()
         labels = tokenizer(targets, max_length=max_length, truncation=True, padding="max_length", add_special_tokens=True).input_ids
         model_inputs['labels'] = labels
         return model_inputs
@@ -112,7 +108,8 @@ def single_GPU_FT():
         report_to="wandb",
         seed=42,
     )
-
+    print (tokenized_datasets)
+    input()
     # Initialize the Trainer
     trainer = SFTTrainer(
         model=model,
@@ -136,21 +133,22 @@ def single_GPU_FT():
 def FT_Wen(device):
     training_config = {
         "bf16": True,
-        "do_eval": False,
-        "learning_rate": 2.0e-05,
+        "do_eval": True,
+        "learning_rate": 2e-05,
         "log_level": "info",
         "logging_steps": 20,
         "logging_strategy": "steps",
         "lr_scheduler_type": "cosine",
-        "num_train_epochs": 30,
+        "num_train_epochs": 40,
         "max_steps": -1,
+        "eval_steps":20,
         "output_dir": "./phi-3-mini-LoRA",
         "overwrite_output_dir": True,
         "per_device_eval_batch_size": 12,
         "per_device_train_batch_size": 12,
         "remove_unused_columns": True,
         "save_steps": 100,
-        "save_total_limit": 1,
+        "save_total_limit": 5,
         "seed": 0,
         "gradient_checkpointing": True,
         "gradient_checkpointing_kwargs":{"use_reentrant": False},
@@ -202,46 +200,66 @@ def FT_Wen(device):
     train_dataset = dataset[:int(len(dataset)*0.8)]
     val_dataset = dataset[int(len(dataset)*0.8):]
     
-    train_data = [
-        {
-        "text":"<s><|user|>\n" + row_dict['input'].replace('\n\n','\n').replace('<|user|>\n', '').replace('\n<|end|>', '<|end|>') + '\n<|assistant|>\n' + row_dict['output'].replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','') + '<|end|>'
-        }
-        for row_dict in train_dataset
-    ]
-    with open('train_data.json', 'w') as f:
-        json.dump(train_data, f)
+    # train_data = [
+    #     {
+    #     "text":"<s><|user|>\n" + row_dict['input'].replace('\n\n','\n').replace('<|user|>\n', '').replace('\n<|end|>', '<|end|>') + '\n<|assistant|>\n' + row_dict['output'].replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','') + '<|end|>'
+    #     }
+    #     for row_dict in train_dataset
+    # ]
+    # updated_train_data = [
+    #     {
+    #     "text":"<s><|user|>\n" + row_dict['input'].split('You are a robotic arm')[0].replace('\n\n','\n').replace('<|user|>\n', '') + '<|end|>' + \
+    #         '\n<|system|>\nYou are a robotic arm' + row_dict['input'].split('You are a robotic arm')[1].replace('\n\n','\n').replace('<|user|>\n', '').replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>' + \
+    #         '\n<|assistant|>\n' + row_dict['output'].replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>'
+    #     }
+    #     for row_dict in train_dataset
+    # ]
+    # with open('updated_train_data.json', 'w') as f:
+    #     json.dump(updated_train_data, f)
+    # with open('train_data.json', 'w') as f:
+    #     json.dump(train_data, f)
 
-    val_data = [
-        {
-        "text":"<s><|user|>\n" + row_dict['input'].replace('\n\n','\n').replace('Starts<', '').replace('>Ends', '').replace('<|user|>\n', '').replace('\n<|end|>', '<|end|>') + '\n<|assistant|>\n' + row_dict['output'].replace('Starts<', '').replace('>Ends', '').replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','') + '<|end|>'
-        }
-        for row_dict in val_dataset
-    ]
-    with open('val_data.json', 'w') as f:
-        json.dump(val_data, f)
-    
-    train_data = load_dataset('json', data_files='train_data.json')
-    val_data = load_dataset('json', data_files='val_data.json')
+    # val_data = [
+    #     {
+    #     "text":"<s><|user|>\n" + row_dict['input'].replace('\n\n','\n').replace('Starts<', '').replace('>Ends', '').replace('<|user|>\n', '').replace('\n<|end|>', '<|end|>') + '\n<|assistant|>\n' + row_dict['output'].replace('Starts<', '').replace('>Ends', '').replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','') + '<|end|>'
+    #     }
+    #     for row_dict in val_dataset
+    # ]
+    # updated_val_data = [
+    #     {
+    #     "text":"<s><|user|>\n" + row_dict['input'].split('You are a robotic arm')[0].replace('\n\n','\n').replace('<|user|>\n', '') + '<|end|>' + \
+    #         '\n<|system|>\nYou are a robotic arm' + row_dict['input'].split('You are a robotic arm')[1].replace('\n\n','\n').replace('<|user|>\n', '').replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>' + \
+    #         '\n<|assistant|>\n' + row_dict['output'].replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>'
+    #     }
+    #     for row_dict in val_dataset
+    # ]
+    # with open('val_data.json', 'w') as f:
+    #     json.dump(val_data, f)
+    # with open('updated_val_data.json', 'w') as f:
+    #     json.dump(updated_val_data, f)
+        
+    train_data = load_dataset('json', data_files='updated_train_data.json')
+    val_data = load_dataset('json', data_files='updated_val_data.json')
     print (train_data)
     print (val_data)
-        
+    
     trainer = SFTTrainer(
         model=model,
         args=train_conf,
         peft_config=peft_conf,
         train_dataset=train_data['train'],
         eval_dataset=val_data['train'],
-        max_seq_length=2048,
+        max_seq_length=1500,
         dataset_text_field="text",
         tokenizer=tokenizer,
         packing=True
     )
 
-    train_result = trainer.train()
+    trainer.train()
     trainer.save_model(train_conf.output_dir)
     
 def Evaluation(device):
-    output_dir = "./phi-3-mini-LoRA/checkpoint-780"
+    output_dir = "./phi-3-mini-LoRA/checkpoint-1320"
     model_name = "microsoft/Phi-3-mini-4k-instruct"
     model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True, torch_dtype=torch.bfloat16)
     tokenizer = AutoTokenizer.from_pretrained(output_dir, trust_remote_code=True, add_eos_token=True, use_fast=True)
@@ -258,19 +276,34 @@ def Evaluation(device):
     pipe = pipeline('text-generation', model=model, tokenizer=tokenizer, device=device)
     def generate_response(input_text):
         print ("generating response...")
-        prompt = pipe.tokenizer.apply_chat_template([{"role": "user", "content": input_text}], tokenize=False, add_generation_prompt=True)
-        output = pipe(prompt, max_new_tokens=1024, do_sample=True, temperature=0.2, num_beams=1, top_k=50, top_p=0.95)
+        # prompt = pipe.tokenizer.apply_chat_template([{"role": "system", "content": "you are a helpful robot planner"},{"role": "user", "content": input_text}], tokenize=False, add_generation_prompt=True)
+        output = pipe(input_text, max_new_tokens=1024, do_sample=True, temperature=0.2, num_beams=1, top_k=50, top_p=0.95)
         return output[0]['generated_text'].strip()
 
+    eval_times = 10
     ## loading evaluation dataset
-    eval_dataset_path = 'val_data.json'
+    eval_dataset_path = 'updated_val_data.json'
     eval_dataset = json.loads(open(eval_dataset_path).read())
-    prompt = eval_dataset[1]['text']
     
-    # Evaluate the model
-    result = generate_response(prompt)
-    
-    print (result)
+    for i in range (eval_times):
+        prompt = eval_dataset[i]['text']
+        ## get the text prompt until the text "<|end|>" appears
+        prompt = prompt.split("<|assistant|>")[0] + "<|assistant|>"
+        print (prompt)
+        # Evaluate the model
+        result = generate_response(prompt)
+        ## only save the python code part from the completion
+        with open(f'box/Phi-3-FT/output_{i}.txt', 'w') as f:
+            f.write(result)
+        # try: 
+        #     completion_code = result.split('**\npython')[1].split('<|end|>')[0]
+        # except:
+        #     completion_code = result.split('```python')[1].split('```')[0]
+        # with open(f'box/Phi-3-FT/python_output_{i}.txt', 'w') as f:
+        #     f.write(completion_code)
+        print(f'Python code saved to python_output_{i}.txt') 
+        
+        # print (result)
     
 
 if __name__ == "__main__":
