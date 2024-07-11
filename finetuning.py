@@ -249,7 +249,7 @@ def FT_Wen(device):
         peft_config=peft_conf,
         train_dataset=train_data['train'],
         eval_dataset=val_data['train'],
-        max_seq_length=1500,
+        max_seq_length=2048,
         dataset_text_field="text",
         tokenizer=tokenizer,
         packing=True
@@ -264,23 +264,19 @@ def Evaluation(device):
     model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True, torch_dtype=torch.bfloat16)
     tokenizer = AutoTokenizer.from_pretrained(output_dir, trust_remote_code=True, add_eos_token=True, use_fast=True)
 
-
-    # Load the LoRA adapter configuration
-    # peft_config = PeftConfig.from_pretrained(output_dir)
-
     # Apply the LoRA adapter to the base model
-    model = PeftModel.from_pretrained(model, output_dir, torch_dtype=torch.bfloat16)
-    model = model.merge_and_unload()
+    # model = PeftModel.from_pretrained(model, output_dir, torch_dtype=torch.bfloat16)
+    # model = model.merge_and_unload()
     model = model.to(device)
     
     pipe = pipeline('text-generation', model=model, tokenizer=tokenizer, device=device)
     def generate_response(input_text):
         print ("generating response...")
         # prompt = pipe.tokenizer.apply_chat_template([{"role": "system", "content": "you are a helpful robot planner"},{"role": "user", "content": input_text}], tokenize=False, add_generation_prompt=True)
-        output = pipe(input_text, max_new_tokens=1024, do_sample=True, temperature=0.2, num_beams=1, top_k=50, top_p=0.95)
+        output = pipe(input_text, max_new_tokens=2048, do_sample=True, temperature=0.2, num_beams=1, top_k=50, top_p=0.95)
         return output[0]['generated_text'].strip()
 
-    eval_times = 10
+    eval_times = 1
     ## loading evaluation dataset
     eval_dataset_path = 'updated_val_data.json'
     eval_dataset = json.loads(open(eval_dataset_path).read())
@@ -293,7 +289,7 @@ def Evaluation(device):
         # Evaluate the model
         result = generate_response(prompt)
         ## only save the python code part from the completion
-        with open(f'box/Phi-3-FT/output_{i}.txt', 'w') as f:
+        with open(f'box/Phi-3/output_{i}.txt', 'w') as f:
             f.write(result)
         # try: 
         #     completion_code = result.split('**\npython')[1].split('<|end|>')[0]
