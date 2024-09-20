@@ -1,13 +1,13 @@
 <s><|user|>
-Task is place ballA on top of cubeA and then place cubeB on top of ballA
+Task is place CubeJ inside FunnelK
 <|end|>
 <|system|>
 You are a robotic arm with advanced planning capabilities. Your task is to generate Python code using parameterized skills (open_gripper(), close_gripper(), move_to_position(), get_position(), get_size()) that accomplishes the user's specified task.
 Please produce executable Python code that employs these pre-scripted parameterized skills. Remember to import the necessary package before running the code. Carefully think through your plans and code.
-When generating plans, consider spatial relationships meticulously.
+When generating plans, consider spatial relationships meticulously. 
 For example: If you need to pick up an object, first move to a position above it, then move down to grasp it. Moving directly to the object's position may push it away. Treat it as a two-step process. After this, consider whether the gripper might hit another object while moving to the next position.
 Here is an example snippet for your reference, demonstrating how to call the function:
-"""
+""
 python
 import numpy as np  # import numpy because we are using it below
 open_gripper()
@@ -17,64 +17,44 @@ cubeA_position = get_position('cubeA')
 # Get size of cubeA
 cubeA_size = get_size('cubeA')
 move_to_position(cubeA_position)
-"""
-Please generate a step-by-step plan followed by a single Python code block.
-You don't need to define all the functions again, just use them. There's no need to define a function for the task, just generate the code.
-<|end|>
+""
+Please generate a step-by-step plan followed by a single Python code block. 
+You don't need to define all the functions again, just use them. There's no need to define a function for the task, just generate the code.<|end|>
 <|assistant|> **Plan:**
 1. Open the gripper to ensure it is ready to grasp objects.
-2. Get the position and size of ballA.
-3. Move to a position directly above ballA.
-4. Move down to the position of ballA.
-5. Close the gripper to grasp ballA.
-6. Get the position and size of cubeA.
-7. Move to a position directly above cubeA.
-8. Move down to a position just above cubeA.
-9. Close the gripper to grasp cubeA.
-10. Move the gripper down to place ballA on top of cubeA.
-11. Get the position and size of cubeB.
-12. Move to a position directly above cubeB.
-13. Move down to a position just above cubeB.
-14. Open the gripper to release cubeB.
-15. Move the gripper away from cubeB to complete the task.
+2. Get the position and size of CubeJ.
+3. Move to a position directly above CubeJ.
+4. Move down to the position of CubeJ.
+5. Close the gripper to grasp CubeJ.
+6. Get the position and size of FunnelK.
+7. Move to a position directly above FunnelK.
+8. Move down to the position of FunnelK.
+9. Open the gripper to release CubeJ inside FunnelK.
+10. Move the gripper away from FunnelK to complete the task.
 **Python Code:**
 python
 import numpy as np  # Import numpy because we are using it below
 # Step 1: Open the gripper
 open_gripper()
-# Step 2: Get the position and size of ballA
-ballA_position = get_position('ballA')
-ballA_size = get_size('ballA')
-# Step 3: Move to a position directly above ballA
-above_ballA = ballA_position + np.array([0, 0, ballA_size[2] + 0.1])  # Adding a buffer of 0.1 units above ballA
-move_to_position(above_ballA)
-# Step 4: Move down to the position of ballA
-move_to_position(ballA_position)
-# Step 5: Close the gripper to grasp ballA
+# Step 2: Get the position and size of CubeJ
+cubeJ_position = get_position('CubeJ')
+cubeJ_size = get_size('CubeJ')
+# Step 3: Move to a position directly above CubeJ
+above_cubeJ = cubeJ_position + np.array([0, 0, cubeJ_size[2] + 0.1])  # Adding a buffer of 0.1 units above CubeJ
+move_to_position(above_cubeJ)
+# Step 4: Move down to the position of CubeJ
+move_to_position(cubeJ_position)
+# Step 5: Close the gripper to grasp CubeJ
 close_gripper()
-# Step 6: Get the position and size of cubeA
-cubeA_position = get_position('cubeA')
-cubeA_size = get_size('cubeA')
-# Step 7: Move to a position directly above cubeA
-above_cubeA = cubeA_position + np.array([0, 0, ballA_size[2] + cubeA_size[2] + 0.1])  # Adding a buffer of 0.1 units above cubeA
-move_to_position(above_cubeA)
-# Step 8: Move down to a position just above cubeA
-just_above_cubeA = cubeA_position + np.array([0, 0, ballA_size[2] + cubeA_size[2]])
-move_to_position(just_above_cubeA)
-# Step 9: Close the gripper to grasp cubeA
-close_gripper()
-# Step 10: Move the gripper down to place ballA on top of cubeA
-move_to_position(cubeA_position)
-# Step 11: Get the position and size of cubeB
-cubeB_position = get_position('cubeB')
-cubeB_size = get_size('cubeB')
-# Step 12: Move to a position directly above cubeB
-above_cubeB = cubeB_position + np.array([0, 0, cubeA_size[2] + ballA_size[2] + cubeB_size[2] + 0.1])  # Adding a buffer of 0.1 units above cubeB
-move_to_position(above_cubeB)
-# Step 13: Move down to a position just above cubeB
-just_above_cubeB = cubeB_position + np.array([0, 0, cubeA_size[2] + ballA_size[2] + cubeB_size[2]])
-move_to_position(just_above_cubeB)
-# Step 14: Open the gripper to release cubeB
+# Step 6: Get the position and size of FunnelK
+funnelK_position = get_position('FunnelK')
+funnelK_size = get_size('FunnelK')
+# Step 7: Move to a position directly above FunnelK
+above_funnelK = funnelK_position + np.array([0, 0, funnelK_size[2] + 0.1])  # Adding a buffer of 0.1 units above FunnelK
+move_to_position(above_funnelK)
+# Step 8: Move down to the position of FunnelK
+move_to_position(funnelK_position)
+# Step 9: Open the gripper to release CubeJ inside FunnelK
 open_gripper()
-# Step 15: Move the gripper away from cubeB to complete the task
-move_to_position(above_cubeB)
+# Step 10: Move the gripper away from FunnelK to complete the task
+move_to_position(above_funnelK)

@@ -44,17 +44,6 @@ class ArmClient:
             {"exec": empty_fn, "eval": empty_fn},
         )
 
-    def get_workspace_range(self):
-        # x_min, y_min, z_min, x_max, y_max, z_max
-        return (
-            self.workspace_min[0],
-            self.workspace_min[1],
-            self.workspace_min[2],
-            self.workspace_max[0],
-            self.workspace_max[1],
-            self.workspace_max[2],
-        )
-
     def function_mapping(self):
         return {
             "move_to_position": self.move_to_position,
@@ -63,8 +52,6 @@ class ArmClient:
             "get_center": self.get_center,
             "get_graspable_point": self.get_graspable_point,
             "get_size": self.get_size,
-            "workspace_clip": self.workspace_clip,
-            "get_workspace_range": self.get_workspace_range,
         }
 
     def create_env(self, agent="LLaVa", objects="2"):
@@ -99,46 +86,7 @@ class ArmClient:
         self.additional_scale = 0.25
         self.world_to_base = np.array([-0.9, 0.0, 0.8])
         self.filter_obj_list = ["cubeA", "cubeB", "cubeC", "cubeD", "bottleA", "ballA"]
-        self.workspace_min = [-0.3, -0.3, 0.8]
-        self.workspace_max = [0.50, 0.5, 1.2]
 
-    def parse_scene_info(self):
-        obj_list = "["
-        for obj in self.env.model.mujoco_objects:
-            obj_list += obj.name + ", "
-        obj_list += "]"
-
-        filtered_obj_list = "["
-        for i, obj in enumerate(self.filter_obj_list):
-            filtered_obj_list += obj
-            if i != len(self.filter_obj_list) - 1:
-                filtered_obj_list += ", "
-        filtered_obj_list += "]"
-
-        obj_info = ""
-        for obj in self.env.model.mujoco_objects:
-            if obj.name in self.filter_obj_list:
-                pos_key = obj.name + "_pos"
-                print("obj name", obj.name)
-                if obj.name == "cubeB" or obj.name == "cubeA" or obj.name == "cubeC" or obj.name == "cubeD" or obj.name == "bottleA" or obj.name == "ballA":
-                    obj_size = np.around(self.get_size(obj.name), 3)
-                    obj_size_string = self.change_array_to_string(obj_size)
-                    obj_position = self.get_center(obj.name)
-                    obj_pos_string = self.change_array_to_string(obj_position)
-                    obj_graspable_point = self.get_graspable_point(obj.name)
-                    obj_graspable_point_string = self.change_array_to_string(obj_graspable_point)
-                    obj_info += f"- [{obj.name}]: <center>: {obj_pos_string}; <size>: {obj_size_string}; <graspable point>: {obj_graspable_point_string}. \n"
-                else:
-                    raise ValueError("Invalid object name")
-
-        # robot_workspace_info="The robot arm's workspace is [0.0-0.30, -0.25-0.25, 0.0-0.35] along the x, y and z axis."
-        robot_workspace_info = f"The robot arm's workspace's x-range is {self.workspace_min[0]}m to {self.workspace_max[0]}m, y-range is {self.workspace_min[1]}m to {self.workspace_max[1]}m, z-range is {self.workspace_min[2]}m to {self.workspace_max[2]}m."
-        common_info = f"You are in a 3D world. You are a robot arm mounted on a table. You can control the end effector's position and gripper. Object list = ['CubeA', 'CubeB']. \nNumerical scene information:\nThe position is represented by a 3D vector [x, y, z]. The axes are perpendicular to each other.\nThe base of the robot arm is at [0.0, 0.0, 0.0].\n{obj_info}\nConstraints you must follow:\n- {robot_workspace_info}"
-        print(termcolor.colored(common_info + "\n", "cyan", attrs=["bold"]))
-        # \n - One magnetic_cube will attract and attach to another one if the distance between the centers of them is less or equal to 0.02m.
-
-        return common_info
-    
     def change_array_to_string(self, array):
         list_array = np.around(array, 3).astype(str).tolist()
         string_array = "["
@@ -170,8 +118,6 @@ class ArmClient:
         if vis:
             self.env.viewer.set_camera(camera_id=0)
 
-        # Get action limits
-        low, high = self.env.action_spec
         writer = None
         if log_video:
             writer = imageio.get_writer(
@@ -209,18 +155,8 @@ class ArmClient:
         else:
             return "closed"
 
-    def workspace_clip(self, target_position_robot):
-        clip_value = np.clip(
-            target_position_robot, self.workspace_min, self.workspace_max
-        )
-        return clip_value
-
     def move_to_position(self, target_position, target_rotation=None):
         print("target position in move to position", target_position)
-        target_position = self.workspace_clip(target_position)
-
-        # target_position = self.transform_to_world(target_position)
-        # print("target position in world frame", target_position)
 
         target_position = np.array(target_position)
         if self.print_vals:
@@ -546,12 +482,6 @@ if __name__ == "__main__":
         + f"/box/{args.agent}/{args.objects}"
     )
     
-    # save_path = (
-    #     os.getcwd()
-    #     + f"/code_results/box"
-    # )
-    
-    # file_path = "./test_script.txt"
     file_path = os.path.join(save_path, args.file_name)
     print('file path')
     print(file_path)

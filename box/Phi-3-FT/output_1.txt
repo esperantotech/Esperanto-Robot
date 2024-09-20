@@ -1,5 +1,5 @@
 <s><|user|>
-Task is place PyramidK on top of CubeL
+Task is place BottleB inside BoxD
 <|end|>
 <|system|>
 You are a robotic arm with advanced planning capabilities. Your task is to generate Python code using parameterized skills (open_gripper(), close_gripper(), move_to_position(), get_position(), get_size()) that accomplishes the user's specified task.
@@ -22,40 +22,40 @@ Please generate a step-by-step plan followed by a single Python code block.
 You don't need to define all the functions again, just use them. There's no need to define a function for the task, just generate the code.<|end|>
 <|assistant|> **Plan:**
 1. Open the gripper to ensure it is ready to grasp objects.
-2. Get the position and size of PyramidK.
-3. Move to a position directly above PyramidK.
-4. Move down to the position of PyramidK.
-5. Close the gripper to grasp PyramidK.
-6. Get the position and size of CubeL.
-7. Move to a position directly above CubeL.
-8. Move down to a position just above CubeL.
-9. Open the gripper to release PyramidK on top of CubeL.
-10. Move the gripper away from CubeL to complete the task.
+2. Get the position and size of BottleB.
+3. Move to a position directly above BottleB.
+4. Move down to the position of BottleB.
+5. Close the gripper to grasp BottleB.
+6. Get the position and size of BoxD.
+7. Move to a position directly above BoxD.
+8. Move down to a position just above the opening of BoxD.
+9. Open the gripper to release BottleB inside BoxD.
+10. Move the gripper away from BoxD to complete the task.
 **Python Code:**
 python
 import numpy as np  # Import numpy because we are using it below
 # Step 1: Open the gripper
 open_gripper()
-# Step 2: Get the position and size of PyramidK
-pyramidK_position = get_position('PyramidK')
-pyramidK_size = get_size('PyramidK')
-# Step 3: Move to a position directly above PyramidK
-above_pyramidK = pyramidK_position + np.array([0, 0, pyramidK_size[2] + 0.1])  # Adding a buffer of 0.1 units above PyramidK
-move_to_position(above_pyramidK)
-# Step 4: Move down to the position of PyramidK
-move_to_position(pyramidK_position)
-# Step 5: Close the gripper to grasp PyramidK
+# Step 2: Get the position and size of BottleB
+bottleB_position = get_position('BottleB')
+bottleB_size = get_size('BottleB')
+# Step 3: Move to a position directly above BottleB
+above_bottleB = np.array(bottleB_position) + np.array(bottleB_size) / 2
+move_to_position(above_bottleB)
+# Step 4: Move down to the position of BottleB
+move_to_position(bottleB_position)
+# Step 5: Close the gripper to grasp BottleB
 close_gripper()
-# Step 6: Get the position and size of CubeL
-cubeL_position = get_position('CubeL')
-cubeL_size = get_size('CubeL')
-# Step 7: Move to a position directly above CubeL
-above_cubeL = cubeL_position + np.array([0, 0, cubeL_size[2] + pyramidK_size[2] + 0.1])  # Adding a buffer of 0.1 units above CubeL
-move_to_position(above_cubeL)
-# Step 8: Move down to a position just above CubeL
-just_above_cubeL = cubeL_position + np.array([0, 0, cubeL_size[2] + pyramidK_size[2]])
-move_to_position(just_above_cubeL)
-# Step 9: Open the gripper to release PyramidK on top of CubeL
+# Step 6: Get the position and size of BoxD
+boxD_position = get_position('BoxD')
+boxD_size = get_size('BoxD')
+# Step 7: Move to a position directly above BoxD
+above_boxD = np.array(boxD_position) + np.array(boxD_size) / 2
+move_to_position(above_boxD)
+# Step 8: Move down to a position just above the opening of BoxD
+inside_boxD = np.array(boxD_position) + np.array(boxD_size) / 2
+move_to_position(inside_boxD)
+# Step 9: Open the gripper to release BottleB inside BoxD
 open_gripper()
-# Step 10: Move the gripper away from CubeL to complete the task
-move_to_position(above_cubeL)
+# Step 10: Move the gripper away from BoxD to complete the task
+move_to_position(above_boxD)

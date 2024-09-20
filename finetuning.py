@@ -13,6 +13,7 @@ import peft
 import transformers
 import json
 import argparse
+import time
 
 
 def single_GPU_FT():
@@ -148,7 +149,7 @@ def FT_Wen(device):
         "per_device_train_batch_size": 12,
         "remove_unused_columns": True,
         "save_steps": 100,
-        "save_total_limit": 5,
+        "save_total_limit": 1,
         "seed": 0,
         "gradient_checkpointing": True,
         "gradient_checkpointing_kwargs":{"use_reentrant": False},
@@ -259,22 +260,26 @@ def FT_Wen(device):
     trainer.save_model(train_conf.output_dir)
     
 def Evaluation(device):
-    output_dir = "./phi-3-mini-LoRA/checkpoint-1320"
+    output_dir = "./phi-3-mini-LoRA/checkpoint-1000"
     model_name = "microsoft/Phi-3-mini-4k-instruct"
     model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True, torch_dtype=torch.bfloat16)
     tokenizer = AutoTokenizer.from_pretrained(output_dir, trust_remote_code=True, add_eos_token=True, use_fast=True)
 
     # Apply the LoRA adapter to the base model
-    # model = PeftModel.from_pretrained(model, output_dir, torch_dtype=torch.bfloat16)
-    # model = model.merge_and_unload()
+    model = PeftModel.from_pretrained(model, output_dir, torch_dtype=torch.bfloat16)
+    model = model.merge_and_unload()
     model = model.to(device)
     
     pipe = pipeline('text-generation', model=model, tokenizer=tokenizer, device=device)
     def generate_response(input_text):
         print ("generating response...")
-        # prompt = pipe.tokenizer.apply_chat_template([{"role": "system", "content": "you are a helpful robot planner"},{"role": "user", "content": input_text}], tokenize=False, add_generation_prompt=True)
+        start_time = time.time()
         output = pipe(input_text, max_new_tokens=2048, do_sample=True, temperature=0.2, num_beams=1, top_k=50, top_p=0.95)
-        return output[0]['generated_text'].strip()
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        num_tokens = len(tokenizer.encode(output[0]['generated_text']))
+        time_per_token = elapsed_time / num_tokens if num_tokens > 0 else 0
+        return output[0]['generated_text'].strip(), elapsed_time, time_per_token
 
     eval_times = 1
     ## loading evaluation dataset
@@ -282,14 +287,14 @@ def Evaluation(device):
     eval_dataset = json.loads(open(eval_dataset_path).read())
     
     for i in range (eval_times):
-        prompt = eval_dataset[i]['text']
+        prompt = eval_dataset[i+10]['text']
         ## get the text prompt until the text "<|end|>" appears
         prompt = prompt.split("<|assistant|>")[0] + "<|assistant|>"
         print (prompt)
         # Evaluate the model
         result = generate_response(prompt)
         ## only save the python code part from the completion
-        with open(f'box/Phi-3/output_{i}.txt', 'w') as f:
+        with open(f'box/Phi-3-FT/output_{i}.txt', 'w') as f:
             f.write(result)
         # try: 
         #     completion_code = result.split('**\npython')[1].split('<|end|>')[0]
