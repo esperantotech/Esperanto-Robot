@@ -52,9 +52,9 @@ def data_generation():
     for i in tqdm.tqdm(range(2)):
         output = open_ai_call_with_retry(model, messages, temperature=0.8).choices[0].message['content']
 
-        # Save the combined data into a JSON file
-        with open(f"{i}_dataset.json", 'w') as f:
-            json.dump(output, f, indent=4)
+        # Save the combined data into a JSON file, please make sure the data is in the correct format
+        # with open(f"{i}_dataset.json", 'w') as f:
+        #     json.dump(output, f, indent=4)
 
     # Print the generated questions and answers
     # for i in range(len(all_output)):
