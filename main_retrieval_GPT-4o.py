@@ -88,16 +88,16 @@ if __name__ == "__main__":
         print(f'Token length: {token_length}')
         print (f'Inference time per token: {check_time / token_length} seconds')
         time_per_token += (check_time / token_length)
-        # if completion:
-        #     print(completion.choices[0].message['content'])
+        if completion:
+            print(completion.choices[0].message['content'])
             
         ## only save the python code part from the completion
-        # completion_code = completion.choices[0].message['content'].split('```python')[1].split('```')[0]
-        # with open(f'box/GPT-4o/{args.objects}/python_output_{i}.txt', 'w') as f:
-        #     f.write(completion_code)
-        # with open(f'box/GPT-4o/{args.objects}/output_{i}.txt', 'w') as f:
-        #     f.write(completion.choices[0].message['content'])
-        # print(f'Python code saved to python_output_{i}.txt') 
+        completion_code = completion.choices[0].message['content'].split('```python')[1].split('```')[0]
+        with open(f'box/GPT-4o/{args.objects}/python_output_{i}.txt', 'w') as f:
+            f.write(completion_code)
+        with open(f'box/GPT-4o/{args.objects}/output_{i}.txt', 'w') as f:
+            f.write(completion.choices[0].message['content'])
+        print(f'Python code saved to python_output_{i}.txt') 
 
     print(f'Inference time: {inference_time} seconds')
     print(f'Average inference time: {inference_time / testing_iterations} seconds')

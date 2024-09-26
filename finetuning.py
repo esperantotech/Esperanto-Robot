@@ -51,9 +51,7 @@ def single_GPU_FT():
 
 
     # Load your dataset
-    # dataset = load_dataset('json', data_files={'train': '/home/xilun/ET_robot/updated_two_stack_dataset.json', 'validation': '/home/xilun/ET_robot/updated_three_stack_dataset.json'})
-    dataset = load_dataset('json', data_files={'train': '/home/xilun/ET_robot/dataset/all_data.json', 'validation': '/home/xilun/ET_robot/dataset/172_dataset.json'})
-    # dataset = load_dataset('json', data_files={'train': '/home/xilun/ET_robot/dataset/172_dataset.json', 'validation': '/home/xilun/ET_robot/dataset/172_dataset.json'})
+    dataset = load_dataset('json', data_files={'train': '/all_data.json', 'validation': '/172_dataset.json'}) ## please make sure the validation data is the one you set during data generation
     
     # Preprocess the dataset
     def preprocess_function(examples):
@@ -71,8 +69,6 @@ def single_GPU_FT():
     tokenized_datasets.set_format(type='torch', columns=['input_ids', 'attention_mask', 'labels'])
 
     # Setup LoRA configuration
-    # target_modules = ['self_attn.qkv_proj', 'mlp.gate_up_proj']
-    # target_modules = ['self_attn.qkv_proj']
     target_modules= ['k_proj', 'q_proj', 'v_proj', 'o_proj', "gate_proj", "down_proj", "up_proj"]
     config = LoraConfig(
         task_type=TaskType.CAUSAL_LM,
@@ -109,8 +105,6 @@ def single_GPU_FT():
         report_to="wandb",
         seed=42,
     )
-    print (tokenized_datasets)
-    input()
     # Initialize the Trainer
     trainer = SFTTrainer(
         model=model,
@@ -129,135 +123,6 @@ def single_GPU_FT():
     # Save the fine-tuned model
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
-    
-    
-def FT_Wen(device):
-    training_config = {
-        "bf16": True,
-        "do_eval": True,
-        "learning_rate": 2e-05,
-        "log_level": "info",
-        "logging_steps": 20,
-        "logging_strategy": "steps",
-        "lr_scheduler_type": "cosine",
-        "num_train_epochs": 40,
-        "max_steps": -1,
-        "eval_steps":20,
-        "output_dir": "./phi-3-mini-LoRA",
-        "overwrite_output_dir": True,
-        "per_device_eval_batch_size": 12,
-        "per_device_train_batch_size": 12,
-        "remove_unused_columns": True,
-        "save_steps": 100,
-        "save_total_limit": 1,
-        "seed": 0,
-        "gradient_checkpointing": True,
-        "gradient_checkpointing_kwargs":{"use_reentrant": False},
-        "gradient_accumulation_steps": 1,
-        "warmup_ratio": 0.2,
-        "report_to": "wandb",
-        }
-
-    peft_config = {
-        "r": 8,
-        "lora_alpha": 16,
-        "lora_dropout": 0.05,
-        "bias": "none",
-        "task_type": "CAUSAL_LM",
-        "target_modules": [
-        "q_proj",
-        "v_proj",
-        "k_proj",
-        "o_proj"
-    ]
-    }
-
-    train_conf = TrainingArguments(**training_config)
-    peft_conf = LoraConfig(**peft_config)
-    
-    checkpoint_path = "microsoft/Phi-3-mini-4k-instruct"
-    model_kwargs = dict(
-        use_cache=False,
-        trust_remote_code=True,
-        attn_implementation="flash_attention_2",  # loading the model with flash-attenstion support
-        torch_dtype=torch.bfloat16,
-        device_map=None
-    )
-    model = AutoModelForCausalLM.from_pretrained(checkpoint_path, **model_kwargs)
-    tokenizer = AutoTokenizer.from_pretrained(checkpoint_path)
-    # tokenizer.model_max_length = 2125
-    tokenizer.pad_token = tokenizer.unk_token  # use unk rather than eos token to prevent endless generation
-    tokenizer.pad_token_id = tokenizer.convert_tokens_to_ids(tokenizer.pad_token)
-    tokenizer.padding_side = 'right'
-    
-    model = get_peft_model(model, peft_conf)
-    model = model.to(device)
-    model.print_trainable_parameters()
-    
-    dataset_path = '/home/xilun/ET_robot/dataset/all_data.json'
-    
-    dataset = json.loads(open(dataset_path).read())
-    
-    train_dataset = dataset[:int(len(dataset)*0.8)]
-    val_dataset = dataset[int(len(dataset)*0.8):]
-    
-    # train_data = [
-    #     {
-    #     "text":"<s><|user|>\n" + row_dict['input'].replace('\n\n','\n').replace('<|user|>\n', '').replace('\n<|end|>', '<|end|>') + '\n<|assistant|>\n' + row_dict['output'].replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','') + '<|end|>'
-    #     }
-    #     for row_dict in train_dataset
-    # ]
-    # updated_train_data = [
-    #     {
-    #     "text":"<s><|user|>\n" + row_dict['input'].split('You are a robotic arm')[0].replace('\n\n','\n').replace('<|user|>\n', '') + '<|end|>' + \
-    #         '\n<|system|>\nYou are a robotic arm' + row_dict['input'].split('You are a robotic arm')[1].replace('\n\n','\n').replace('<|user|>\n', '').replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>' + \
-    #         '\n<|assistant|>\n' + row_dict['output'].replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>'
-    #     }
-    #     for row_dict in train_dataset
-    # ]
-    # with open('updated_train_data.json', 'w') as f:
-    #     json.dump(updated_train_data, f)
-    # with open('train_data.json', 'w') as f:
-    #     json.dump(train_data, f)
-
-    # val_data = [
-    #     {
-    #     "text":"<s><|user|>\n" + row_dict['input'].replace('\n\n','\n').replace('Starts<', '').replace('>Ends', '').replace('<|user|>\n', '').replace('\n<|end|>', '<|end|>') + '\n<|assistant|>\n' + row_dict['output'].replace('Starts<', '').replace('>Ends', '').replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','') + '<|end|>'
-    #     }
-    #     for row_dict in val_dataset
-    # ]
-    # updated_val_data = [
-    #     {
-    #     "text":"<s><|user|>\n" + row_dict['input'].split('You are a robotic arm')[0].replace('\n\n','\n').replace('<|user|>\n', '') + '<|end|>' + \
-    #         '\n<|system|>\nYou are a robotic arm' + row_dict['input'].split('You are a robotic arm')[1].replace('\n\n','\n').replace('<|user|>\n', '').replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>' + \
-    #         '\n<|assistant|>\n' + row_dict['output'].replace('graspable point', 'position').replace('graspable_point', 'position').replace('\n\n\n','\n').replace('\n\n','\n').replace('<|assistant|>','').replace('\n<|end|>', '').replace('<|end|>', '') + '<|end|>'
-    #     }
-    #     for row_dict in val_dataset
-    # ]
-    # with open('val_data.json', 'w') as f:
-    #     json.dump(val_data, f)
-    # with open('updated_val_data.json', 'w') as f:
-    #     json.dump(updated_val_data, f)
-        
-    train_data = load_dataset('json', data_files='updated_train_data.json')
-    val_data = load_dataset('json', data_files='updated_val_data.json')
-    print (train_data)
-    print (val_data)
-    
-    trainer = SFTTrainer(
-        model=model,
-        args=train_conf,
-        peft_config=peft_conf,
-        train_dataset=train_data['train'],
-        eval_dataset=val_data['train'],
-        max_seq_length=2048,
-        dataset_text_field="text",
-        tokenizer=tokenizer,
-        packing=True
-    )
-
-    trainer.train()
-    trainer.save_model(train_conf.output_dir)
     
 def Evaluation(device):
     output_dir = "./phi-3-mini-LoRA/checkpoint-1000"
@@ -290,36 +155,28 @@ def Evaluation(device):
         prompt = eval_dataset[i+10]['text']
         ## get the text prompt until the text "<|end|>" appears
         prompt = prompt.split("<|assistant|>")[0] + "<|assistant|>"
-        print (prompt)
         # Evaluate the model
         result = generate_response(prompt)
         ## only save the python code part from the completion
         with open(f'box/Phi-3-FT/output_{i}.txt', 'w') as f:
             f.write(result)
-        # try: 
-        #     completion_code = result.split('**\npython')[1].split('<|end|>')[0]
-        # except:
-        #     completion_code = result.split('```python')[1].split('```')[0]
-        # with open(f'box/Phi-3-FT/python_output_{i}.txt', 'w') as f:
-        #     f.write(completion_code)
+        try: 
+            completion_code = result.split('**\npython')[1].split('<|end|>')[0]
+        except:
+            completion_code = result.split('```python')[1].split('```')[0]
+        with open(f'box/Phi-3-FT/python_output_{i}.txt', 'w') as f:
+            f.write(completion_code)
         print(f'Python code saved to python_output_{i}.txt') 
-        
-        # print (result)
     
 
 if __name__ == "__main__":
     ## initiliaze arguments 
     parser = argparse.ArgumentParser()
     parser.add_argument("--FT", action="store_true")
-    parser.add_argument("--training", action="store_true")
     parser.add_argument("--eval", action="store_true")
     args = parser.parse_args()
     if args.FT:
-        single_GPU_FT()
-    elif args.training:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        FT_Wen(device)
-    
+        single_GPU_FT() 
     if args.eval:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         Evaluation(device)

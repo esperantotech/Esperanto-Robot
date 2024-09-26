@@ -70,14 +70,6 @@ def get_image(env, model, image_path, depth_image_path=None, image_folder_path='
     return world_point
 
 def get_homography_matrix(image, boxes):
-    # _, h, w = image.shape
-    # boxes = boxes * np.array([w, h, w, h])
-    # xyxy = box_convert(boxes=boxes, in_fmt="cxcywh", out_fmt="xyxy").numpy()
-    # print (xyxy)
-    # a, b, c, d = xyxy[0]
-    # print ((a+c)/2, (b+d)/2)
-    # input()
-    # pixel points: red cube, blue cube, red ball, yellow cube
     pixel_points = np.array([[209.239, 398.7894535064697], [209.28349494934082, 66.24521017074585], 
                              [114.44417238235474, 208.26282501220703], [399.77078437805176, 66.19623899459839]])
     # world points: cubeA, cubeC, ballA, cubeD
@@ -155,5 +147,6 @@ def main():
     env.close()
 
 if __name__ == "__main__":
+    ## This file still needs to be fixed to get depth information from build-in stereo camera
     main()
 

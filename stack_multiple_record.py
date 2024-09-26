@@ -10,11 +10,6 @@ import os
 import argparse
 
 from robosuite.controllers import load_controller_config
-
-# from robosuite.utils.input_utils import *
-# from robosuite.environments.manipulation.pick_place_ycb import PickPlace
-# from robosuite.environments.manipulation.magnetic import Magnetic
-# from robosuite.environments.manipulation.pull_paper import pull_paper
 from robosuite.environments.manipulation.stack_multiple import Stack
 
 
@@ -28,7 +23,6 @@ class ArmClient:
         self.create_env(agent=agent, objects=objects)
 
     def reset(self):
-        # TODO: need to reset the whole environment, instead of the super object
         pass
 
     def execute_code(self, code):
