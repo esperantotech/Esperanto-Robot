@@ -49,7 +49,7 @@ def data_generation():
     ]
 
     all_output = []
-    for i in tqdm.tqdm(range(50)):
+    for i in tqdm.tqdm(range(2)):
         output = open_ai_call_with_retry(model, messages, temperature=0.8).choices[0].message['content']
 
         # Save the combined data into a JSON file
@@ -66,7 +66,7 @@ def data_generation():
 def data_combination():
 
     # Get the current working directory
-    path = os.getcwd()
+    path = os.getcwd() # config correct path
 
     # List all files in the directory
     files = os.listdir(path)
